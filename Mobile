@@ -1,0 +1,70 @@
+
+####ANDROID
+--EMULATOR - Android Studio
+--REAL DEVICE - rooted, developer options ON, USB debugging ON
+connect via adb
+connect via Android studio, can view files, copy files. 
+screenshots - Android cast or similar tool
+
+
+###pull files/install tools (socat, tcpdump etc) - push to the writable location e.g. /sdcard/
+adb push tcpdump /sdcard/
+#find writable path
+echo "$PATH"
+#try to copy executive to each location 
+cp tcpdump /sbin/
+#change mode to executible
+chmod 777  /sbin/tcpdump 
+
+#port forwarding 
+socat -dd TCP-LISTEN:8443,fork,reuseaddr TCP6:[::1]:4443 
+adb forward tcp:4443 tcp:7443
+
+
+#####IOS
+--EMULATOR -  https://www.corellium.com
+--REAL DEVICE - jailbreak
+connect via ssh. Need to be in the same network, pay attention if network firewall does not block incoming connections, in this case ssh will be impossible. 
+connect via xcode, can make screenshots, view system logs, copy files (copy files not always works in case xcode)
+connect via frida objections
+
+
+#####INPUT:
+ANDORID: *.apk file, apkpure, you can open it in android studio, decompile with mobsf.
+IOS: *.ipa file
+
+#####DECOMPILATION: mobsf, TODO
+
+#####ANDROID KEYCHAIN DUMP
+
+###iOS
+#connect via ssh
+ssh root@192.168.87.69
+#copy:
+scp  -r root@192.168.87.69:/var/mobile/Containers/Data/Application/A2197736-12FC-460B-B635-3D1534E3D29A/ /Users/oksana/
+
+
+####objection - check canary values (could be done with MOBSF as well)
+oksana@surfer% objection -g <app>  explore
+Checking for a newer version of objection...
+Using USB device `iPhone`
+Agent injected and responds ok!
+
+     _   _         _   _
+ ___| |_|_|___ ___| |_|_|___ ___
+| . | . | | -_|  _|  _| | . |   |
+|___|___| |___|___|_| |_|___|_|_|
+      |___|(object)inject(ion) v1.11.0
+
+     Runtime Mobile Exploration
+        by: @leonjza from @sensepost
+
+[tab] for command suggestions
+ on (iPhone: 12.4) [usb] # ios info binary
+Name       Type     Encrypted  PIE    ARC   Canary  Stack Exec  RootSafe
+---------  -------  ---------  -----  ----  ------  ----------  --------
+<app>  execute  False      True   True  True    False       False
+<applib>    dylib    False      False  True  True    False       False
+<applib2>     dylib    False      False  True  True    False       False
+.. on (iPhone: 12.4) [usb] # exit
+Exiting...
