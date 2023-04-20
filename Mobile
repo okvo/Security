@@ -68,3 +68,47 @@ Name       Type     Encrypted  PIE    ARC   Canary  Stack Exec  RootSafe
 <applib2>     dylib    False      False  True  True    False       False
 .. on (iPhone: 12.4) [usb] # exit
 Exiting...
+
+
+
+####ios keychain dump
+
+oksana@surfe% objection -g <app>  explore
+Using USB device `iPhone`
+Agent injected and responds ok!
+
+     _   _         _   _
+ ___| |_|_|___ ___| |_|_|___ ___
+| . | . | | -_|  _|  _| | . |   |
+|___|___| |___|___|_| |_|___|_|_|
+      |___|(object)inject(ion) v1.11.0
+
+     Runtime Mobile Exploration
+        by: @leonjza from @sensepost
+
+[tab] for command suggestions
+...<app> (iPhone: 12.4) [usb] # ios keychain dump_raw
+Note: You may be asked to authenticate using the devices passcode or TouchID
+Dumping the iOS keychain...
+{
+    UUID = "2A11D7D1-19EA-43F4-8B12-23995";
+    accc = "<SecAccessControlRef: ak>";
+    acct = ViWiKeychainCredentialsStore;
+    agrp = "C55KD997E3<app>";
+    cdat = "2023-03-14 15:32:16 +0000";
+    class = genp;
+    mdat = "2023-03-15 11:18:23 +0000";
+    musr = <>;
+    pdmn = ak;
+    persistref = <>;
+    sha1 = <732366dc 2ae48a41 e9e2986a 48c918e3>;
+    svce = ViWiKeychainCredentialsStore;
+    sync = 0;
+    tomb = 0;
+    "v_Data" = <62706c69   04050622 23582476 65727369 6f6e5824 6f626a65 63747359 24617263 68697665 72542474 6f701200 0186a0a9 07081516 1718191a 1b55246e 756c6cd3 090a0b0c 1014574e 532e6b65 79735a4e 532e6f62 6a656374 73562463 6c617373 a30d0e0f 80028003 8004a311 12138005 80068007 80085850 61737377 6f726453 56696e58 55736572 6e616d65 5f102046 35424143 35364432 34333937 41434341 41344135 31423538 33334243 4146315f 10115858 58585858 58585858 58585858 5858585f 10103335 35323739 37374241 35443932 3037d21c 1d1e1f5a 24636c61 73736e61 6d655824 636c6173 7365735f 10134e53 4d757461 626c6544 69637469 6f6e6172 79a31e20 215c4e53 44696374 696f6e61 7279584e 534f626a 6563745f 100f4e53 4b657965 64417263 68697665 72d12425 54726f6f 74800100 08001100 1a002300 2d003200 37004100 47004e00 56006100 68006c00 6e007000 72007600 78007a00 7c007e00 87008b00 9400b700 cb00de00 e300ee00 f7010d01 11011e01 27013901 3c014100 00000000 00020100 00000000 00002600 00000000 00000000 00000000 000143>;
+}
+{
+
+
+### keychaon hex formatiing to json:
+cat 1234.txt |xxd -r -p|
