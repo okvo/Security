@@ -1,0 +1,10 @@
+##Captcha bypass
+1. POST=>GET
+2. PUT=>POST
+3. removing the parameter or using the previously used captcha
+4. .json to xml request Content-Type: application/x-www-form-urlencoded
+5. Using extra headers
+X-Originating-IP: 127.0.0.1
+X-Forwarded-For: 127.0.0.1
+X-Remote-IP: 127.0.0.1
+X-Remote-Addr: 127.0.0.1
