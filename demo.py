@@ -1,72 +1,92 @@
-from flask import Flask, request, render_template_string, send_file
-import requests
+from flask import Flask, request, render_template_string, send_from_directory, redirect, url_for
 import os
-from urllib.parse import urlparse
+import requests
+from werkzeug.utils import secure_filename
+from io import BytesIO
+from PIL import Image
 
 app = Flask(__name__)
-UPLOAD_FOLDER = './uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-HTML_PAGE = """
-<!doctype html>
-<title>Avatar Upload</title>
-<h1>Upload your avatar</h1>
-<form method=post enctype=multipart/form-data>
-  <label>Upload from your computer:</label><br>
-  <input type=file name=file><br><br>
-  <label>Or provide an external URL:</label><br>
-  <input type=text name=url size=80><br><br>
-  <input type=submit value=Upload>
-</form>
-{% if result %}
-<h2>Result:</h2>
-<pre>{{ result }}</pre>
-{% endif %}
-"""
-
-def mock_check_port(port):
-    if port in [80, 443, 22]:
-        return f"Connection to port {port} successful"
-    else:
-        return f"Connection to port {port} failed"
-
-def mock_aws_metadata():
-    return """{
-  "AccessKeyId": "ASIA...MOCKED",
-  "SecretAccessKey": "mockedsecret123",
-  "Token": "MockedSessionToken",
-  "Expiration": "2025-12-31T23:59:59Z"
-}"""
+app.config['UPLOAD_FOLDER'] = './uploads'
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_avatar():
-    result = None
+    message = ''
+    image_url = ''
+    uploaded_image = ''
     if request.method == 'POST':
-        file = request.files.get('file')
-        url = request.form.get('url')
+        url = request.form.get('avatar_url', '').strip()
+        file = request.files.get('avatar_file')
 
-        if file:
-            filepath = os.path.join(UPLOAD_FOLDER, file.filename)
-            file.save(filepath)
-            result = f"File uploaded to {filepath}"
-
-        elif url:
-            try:
-                parsed = urlparse(url)
-                host = parsed.hostname
-                port = parsed.port or 80
-
-                if host == '169.254.169.254':
-                    result = f"Fetched AWS Metadata:\n{mock_aws_metadata()}"
-                elif host == '127.0.0.1' or host == 'localhost':
-                    result = mock_check_port(port)
-                else:
+        if url:
+            if '169.254.169.254' in url:
+                message = "Mocked AWS Metadata:\nAccessKeyId: ASIA...MOCKED\nSecretAccessKey: mocksecret\nToken: MockedToken\nExpiration: 2025-12-31T23:59:59Z"
+            elif '127.0.0.1' in url:
+                try:
+                    port = int(url.split(":")[-1])
+                    if port in [80, 443, 22]:
+                        message = f"Mocked: Connection to port {port} successful."
+                    else:
+                        message = f"Mocked: Connection to port {port} failed."
+                except Exception:
+                    message = "Invalid localhost format."
+            else:
+                try:
                     r = requests.get(url, timeout=3)
-                    result = f"Fetched remote content:\n{r.text[:300]}..."
-            except Exception as e:
-                result = f"Error: {str(e)}"
+                    content_type = r.headers.get('Content-Type', '')
+                    if 'image' in content_type:
+                        image_url = url
+                        message = "Image loaded successfully from URL."
+                    else:
+                        message = f"Fetched data:\n{r.text[:300]}"
+                except Exception as e:
+                    message = f"Failed to fetch URL: {e}"
 
-    return render_template_string(HTML_PAGE, result=result)
+        elif file and file.filename:
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            uploaded_image = filename
+            message = "Image uploaded successfully from local computer."
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5005)
+    return render_template_string('''
+    <html>
+    <head>
+        <title>Avatar Upload</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 40px; }
+            input[type="text"] { width: 80%; padding: 10px; margin: 10px 0; }
+            input[type="file"] { margin: 10px 0; }
+            textarea { width: 80%; height: 150px; }
+        </style>
+    </head>
+    <body>
+        <h2>Upload Your Avatar</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <label>From URL:</label><br>
+            <input type="text" name="avatar_url" placeholder="https://example.com/avatar.png"><br>
+            <label>Or choose from computer:</label><br>
+            <input type="file" name="avatar_file"><br><br>
+            <input type="submit" value="Upload Avatar">
+        </form>
+        <br>
+        {% if image_url %}
+            <h3>Avatar from URL:</h3>
+            <img src="{{ image_url }}" width="200"><br>
+        {% endif %}
+        {% if uploaded_image %}
+            <h3>Avatar from local upload:</h3>
+            <img src="{{ url_for('uploaded_file', filename=uploaded_image) }}" width="200"><br>
+        {% endif %}
+        <br>
+        <h3>Server Response:</h3>
+        <textarea readonly>{{ message }}</textarea>
+    </body>
+    </html>
+    ''', image_url=image_url, uploaded_image=uploaded_image, message=message)
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+app.run(port=5005)
